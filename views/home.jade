@@ -5,30 +5,7 @@ html
     script(src="libs/jquery-ui-1.8.16.custom/js/jquery-1.6.2.min.js")
     script(src="libs/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js")
     script(src="https://crypto-js.googlecode.com/files/2.2.0-crypto-md5.js")
+    script(src="libs/agility.min.js")
     script(src="javascripts/main.js")
     #script(src="http://pagead2.googlesyndication.com/pagead/show_ads.js")
   body
-    .container
-      .row
-        .span8
-          form.form-stacked
-            fieldset
-              div.clearfix#first
-                label(for="xlInput") What are you waiting for?
-                div.input
-                  input.xlarge#what(name="what", size="30", type="text")
-        .span8
-          form.form-stacked
-            fieldset
-              div.clearfix#second
-                label(for="xlInput") When is it due?
-                div.input
-                  input.xlarge(id="datepicker", name="when", size="30", type="text")
-      .row
-        div#tweak
-          div.clearfix
-            div.hero-unit#countdown
-              h1#counter
-
-          div.actions#actions
-            input.btn.primary(type="submit", value="share")

@@ -184,31 +184,95 @@ var State = function() {
 state = new State();
 
 function updateState() {
-  if (state.dateText && $("#what").val()) {
+  var txt;
+  var what = $("#what").val();
+  if (state.dateText && what){
     if (state.numDays == 1) 
-      $("#counter").text($("#what").val() + " is tomorrow!");
+      txt = what + " is tomorrow!";
     else if (state.numDays > 1)
-      $("#counter").text(state.numDays + " days to go before " + $("#what").val());
+      txt = state.numDays + " days to go before " + what;
     else if (state.numDays == 0)
-      $("#counter").text($("#what").val() + " is today!");
+      txt = what + " is today!";
     else if (state.numDays == -1) 
-      $("#counter").text($("#what").val() + " was yesterday!");
+      txt = what + " was yesterday!";
     else 
-      $("#counter").text($("#what").val() + " was " + (-1 * state.numDays) + " days ago!");
-    $("#countdown").show();
-    $("#actions").show();
-    } else {
-      $("#countdown").hide();
-      $("#actions").hide();
+      txt = what + " was " + (-1 * state.numDays) + " days ago!";
+    countdown.show(txt)
+  } else {
+    countdown.hide();
     }
 }
 
-var datePicker;
+var datePicker, countdown;
 
 // at startup let's check to see whether we're authenticated to
 // myfavoritebeer (have existing cookie), and update the UI accordingly
 $(function() {
   try {
+
+    var app = $$({}, '<div class="container"> </div>');
+    $$.document.append(app);
+
+    var form = $$({
+      model: {
+        what: 'xmas',
+        when: '12/25/2011'
+      },
+      view: { 
+        format: '<div class="row"> \
+                  <form class="form-stacked">\
+                    <div class="span8">\
+                      <fieldset>\
+                        <div class="clearfix" id="first">\
+                          <label for="xlInput">What are you waiting for?</label>\
+                          <div class="input"><input class="xlarge" id="what" name="what" size="30" type="text"/>\
+                        </div>\
+                      </fieldset>\
+                    </div>\
+                    <div class="span8">\
+                      <fieldset>\
+                        <div class="clearfix" id="second">\
+                          <label for="xlInput">When is it?</label>\
+                          <div class="input"><input class="xlarge" id="datepicker" name="when" size="30" type="text"/>\
+                        </div>\
+                      </fieldset>\
+                    </form>\
+                    <button class="btn hidden">create countdown!</button>\
+                  </div>\
+                </div>',
+        style: '',
+      },
+      controller: {
+        
+      }
+    });
+    app.append(form);
+
+    countdown = $$({
+      model: {
+        text: 'something',
+      },
+      view: {
+        format: '<div class="row hidden" id="countdown">\
+                  <div id="tweak">\
+                    <div class="clearfix">\
+                      <div class="hero-unit">\
+                        <h1 id="counter" data-bind="text"/>\
+                      </div>\
+                    </div>\
+                  </div>\
+                </div>'
+      },
+      controller: {},
+      show: function(s){
+        this.model.set({text:s});
+        this.view.$().slideDown(200);
+      },
+      hide: function(){ this.view.$().slideUp(100); }
+    });
+    app.append(countdown);
+
+
     $( "#datepicker" ).datepicker(
     {
         onClose: function(dateText, inst) {computeDelta(dateText, inst)}
