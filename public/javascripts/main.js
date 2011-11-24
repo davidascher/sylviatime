@@ -188,7 +188,7 @@ $(function() {
                 <label class="xlarge">What are you expecting?</label>\
                 <div class="input">\
                   <input id="what" name="what" size="30" type="text"/>\
-                  which will happen on\
+                  when?\
                   <input class="large" id="datepicker" name="when" size="30" type="text"/>\
                   <button class="create btn hidden" id="create">create countdown!</button>\
                 </div>\
