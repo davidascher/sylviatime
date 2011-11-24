@@ -164,45 +164,6 @@ if (document.addEventListener) {
   document.addEventListener("logout", logout, false);
 }
 
-function computeDelta(dateText) {
-  var then = new Date(dateText);
-  var now = new Date(Date.now());
-  var one_day=1000*60*60*24;
-  var delta, numDays;
-  delta = then.getTime() - now.getTime();
-  numDays = Math.ceil(delta / one_day);
-  state.numDays = numDays;
-  state.dateText = dateText;
-  updateState();
-  return 
-}
-
-var State = function() {
-  
-};
-
-state = new State();
-
-function updateState() {
-  var txt;
-  var what = $("#what").val();
-  if (state.dateText && what){
-    if (state.numDays == 1) 
-      txt = what + " is tomorrow!";
-    else if (state.numDays > 1)
-      txt = state.numDays + " days to go before " + what;
-    else if (state.numDays == 0)
-      txt = what + " is today!";
-    else if (state.numDays == -1) 
-      txt = what + " was yesterday!";
-    else 
-      txt = what + " was " + (-1 * state.numDays) + " days ago!";
-    countdown.show(txt)
-  } else {
-    countdown.hide();
-    }
-}
-
 var datePicker, countdown;
 
 // at startup let's check to see whether we're authenticated to
@@ -220,37 +181,28 @@ $(function() {
       },
       view: { 
         format: '<div class="row"> \
-                  <form class="form-stacked">\
-                    <div class="span8">\
-                      <fieldset>\
-                        <div class="clearfix" id="first">\
-                          <label for="xlInput">What are you waiting for?</label>\
-                          <div class="input"><input class="xlarge" id="what" name="what" size="30" type="text"/>\
-                        </div>\
-                      </fieldset>\
+                  <form>\
+                    <div class="clearfix" id="first">\
+                      <label class="xlarge">What are you expecting?</label>\
+                      <div class="input">\
+                          <input id="what" name="what" size="30" type="text"/>\
+                          which will happen on\
+                          <input class="large" id="datepicker" name="when" size="30" type="text"/>\
+                      </div>\
                     </div>\
-                    <div class="span8">\
-                      <fieldset>\
-                        <div class="clearfix" id="second">\
-                          <label for="xlInput">When is it?</label>\
-                          <div class="input"><input class="xlarge" id="datepicker" name="when" size="30" type="text"/>\
-                        </div>\
-                      </fieldset>\
-                    </form>\
-                    <button class="btn hidden">create countdown!</button>\
-                  </div>\
+                  </form>\
+                  <button class="btn hidden">create countdown!</button>\
                 </div>',
         style: '',
       },
-      controller: {
-        
-      }
     });
     app.append(form);
 
     countdown = $$({
       model: {
-        text: 'something',
+        text: '',
+        numDays: 0,
+        dateText: ''
       },
       view: {
         format: '<div class="row hidden" id="countdown">\
@@ -263,7 +215,62 @@ $(function() {
                   </div>\
                 </div>'
       },
-      controller: {},
+      controller: {
+        create: function() {
+          var self = this;
+          $( "#datepicker" ).datepicker({
+              onClose: function(dateText) {
+                self.computeDelta(dateText)
+                self.updateState();
+              }
+          });
+          $("#what").change(function() {
+            self.updateState();
+          })
+          $("#what").keyup(function() {
+            self.updateState();
+          })
+          
+        }
+      },
+
+      computeDelta: function(dateText) {
+        var then = new Date(dateText);
+        var now = new Date(Date.now());
+        var one_day=1000*60*60*24;
+        var delta, numDays;
+        delta = then.getTime() - now.getTime();
+        numDays = Math.ceil(delta / one_day);
+        this.model.numDays = numDays;
+        this.model.dateText = dateText;
+      },
+
+      updateState: function() {
+        var txt;
+        var what = $("#what").val();
+        var numDays = this.model.numDays;
+        if (this.model.dateText && what){
+          if (numDays == 1) 
+            txt = what + " is tomorrow!";
+          else if (numDays > 1)
+            txt = numDays + " days to go before " + what;
+          else if (numDays == 0)
+            txt = what + " is today!";
+          else if (numDays == -1) 
+            txt = what + " was yesterday!";
+          else 
+            txt = what + " was " + (-1 * numDays) + " days ago!";
+          this.showReady();
+        } else {
+          this.hideReady();
+        }
+      },
+      showReady: function() {
+        console.log(this);
+      },
+      hideReady: function() {
+        console.log(this);
+      },
       show: function(s){
         this.model.set({text:s});
         this.view.$().slideDown(200);
@@ -273,18 +280,6 @@ $(function() {
     app.append(countdown);
 
 
-    $( "#datepicker" ).datepicker(
-    {
-        onClose: function(dateText, inst) {computeDelta(dateText, inst)}
-    });
-    $("#what").change(function() {
-      console.log($("#what").val());
-      updateState();
-    })
-    $("#what").keyup(function() {
-      console.log($("#what").val());
-      updateState();
-    })
     $.get('/api/whoami', function (res) {
       if (res === null) loggedOut();
       else loggedIn(res, true);
