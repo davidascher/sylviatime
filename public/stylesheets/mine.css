@@ -10,8 +10,10 @@ body {
 }
 
 #tweak {
+  padding-top: 2em;
   margin-left: 3em;
-  margin-right: 3em;
+  padding-left: 3em;
+  padding-right: 3em;
 }
 
 .hero-unit {

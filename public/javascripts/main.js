@@ -118,7 +118,6 @@ function logout(event) {
 // when no user is logged in, we'll display a "sign-in" button
 // which will call into browserid when clicked.
 function loggedOut() {
-  console.log('in loggedOut');
   setSessions();
   var unlogged = $("#unlogged").show();
   var loggedin = $("#loggedin").hide();
@@ -177,48 +176,42 @@ $(function() {
     var form = $$({
       model: {
         what: 'xmas',
-        when: '12/25/2011'
-      },
-      view: { 
-        format: '<div class="row"> \
-                  <form>\
-                    <div class="clearfix" id="first">\
-                      <label class="xlarge">What are you expecting?</label>\
-                      <div class="input">\
-                          <input id="what" name="what" size="30" type="text"/>\
-                          which will happen on\
-                          <input class="large" id="datepicker" name="when" size="30" type="text"/>\
-                      </div>\
-                    </div>\
-                  </form>\
-                  <button class="btn hidden">create countdown!</button>\
-                </div>',
-        style: '',
-      },
-    });
-    app.append(form);
-
-    countdown = $$({
-      model: {
+        when: '12/25/2011',
         text: '',
         numDays: 0,
         dateText: ''
       },
-      view: {
-        format: '<div class="row hidden" id="countdown">\
-                  <div id="tweak">\
-                    <div class="clearfix">\
-                      <div class="hero-unit">\
-                        <h1 id="counter" data-bind="text"/>\
-                      </div>\
-                    </div>\
-                  </div>\
-                </div>'
+      view: { 
+        format:
+          '<div class="row"> \
+              <div class="clearfix" id="first">\
+                <label class="xlarge">What are you expecting?</label>\
+                <div class="input">\
+                  <input id="what" name="what" size="30" type="text"/>\
+                  which will happen on\
+                  <input class="large" id="datepicker" name="when" size="30" type="text"/>\
+                  <button class="create btn hidden" id="create">create countdown!</button>\
+                </div>\
+              </div>\
+          </div>\
+          <div class="row hidden" id="countdown">\
+            <div id="tweak">\
+              <div class="clearfix">\
+                <div class="hero-unit">\
+                  <h1 id="counter" data-bind="text"/>\
+                </div>\
+              </div>\
+            </div>\
+          </div>'
       },
       controller: {
+        'click .create': function() {
+          this.show()
+        },
         create: function() {
+          console.log('in create!');
           var self = this;
-          $( "#datepicker" ).datepicker({
+          self.view.$( "#datepicker" ).datepicker({
               onClose: function(dateText) {
                 self.computeDelta(dateText)
                 self.updateState();
@@ -260,24 +253,24 @@ $(function() {
             txt = what + " was yesterday!";
           else 
             txt = what + " was " + (-1 * numDays) + " days ago!";
+          this.model.set({text:txt});
           this.showReady();
         } else {
           this.hideReady();
         }
       },
       showReady: function() {
-        console.log(this);
+        this.view.$("#create").show();
       },
       hideReady: function() {
-        console.log(this);
+        this.view.$("#create").hide();
       },
-      show: function(s){
-        this.model.set({text:s});
+      show: function(){
         this.view.$().slideDown(200);
       },
       hide: function(){ this.view.$().slideUp(100); }
     });
-    app.append(countdown);
+    $$.document.append(form);
 
 
     $.get('/api/whoami', function (res) {
