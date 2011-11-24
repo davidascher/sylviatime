@@ -1,0 +1,131 @@
+
+body {
+  padding-top: 60px;
+  background-image: url("/images/bgnoise.gif");
+  background-repeat: repeat;
+}
+
+#countdown,#actions {
+  display: none;
+}
+
+#tweak {
+  margin-left: 3em;
+  margin-right: 3em;
+}
+
+.hero-unit {
+  background: red;
+}
+
+.hero-unit h1 {
+  color: white;
+}
+
+p.spacer {
+  padding: .5em;
+}
+
+.container {
+  position: relative;
+}
+
+div.right {
+  /*position: fixed;*/
+  float: right;
+  /*margin-right: 1em;*/
+  /*margin-top: 1em;*/
+  padding: 10px 10px 11px;
+}
+
+#logout {
+  padding-left: 1ex;
+}
+#you {
+  color: white;
+}
+
+.sidebar h2 {
+  padding-left: .5ex;
+  padding-right: .5ex;
+}
+h2.selected {
+  background: darkgrey;
+  color: white;
+}
+
+.media-grid li a {
+  position:relative;
+}
+
+.media-grid a .caption {
+  cursor: default;
+  position: absolute;
+  bottom: 1.5ex;
+  left: 1.5ex;
+  color: rgb(90,90,90);
+}
+
+.media-grid a:hover {
+  text-decoration: none;
+}
+
+li.faded a{
+  /*border: 1px solid lightgrey;*/
+  -webkit-transition: 0.1s linear all;
+  -moz-transition: 0.1s linear all;
+  -ms-transition: 0.1s linear all;
+  -o-transition: 0.1s linear all;
+  transition: 0.1s linear all;
+}
+
+
+li.faded:hover img{
+  background: lightyellow;
+}
+
+.tags {
+  display:block;
+  position:relative;
+}
+
+.tag {
+  display: inline;
+  padding: 2px 10px 3px;
+}
+
+.rec {
+  padding-bottom: 1ex;
+}
+
+.rec .url {
+  border: 1px solid grey;
+  background: rgb(240,240,240);
+  display: inline;
+  padding: 1ex 4ex;
+  border-radius: 3px;
+}
+
+.tags {
+  display: inline;
+  padding-left: 1ex;
+}
+.tag.label {
+  background: none;
+}
+
+/*scheme:*/
+/*#233338*/
+/*#5B5A14*/
+/*#C5952E*/
+/*#FAAB62*/
+/*#FA3743*/
+
+
+/*from: http://www.colourlovers.com/lover/lauryn_mack/loveNote*/
+/*931D54*/
+/*D85F13*/
+/*728743*/
+/*E2A109*/
+/*3F1659*/
+

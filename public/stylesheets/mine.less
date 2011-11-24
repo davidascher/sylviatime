@@ -1,0 +1,237 @@
+
+body {
+  padding-top: 60px;
+  background-image: url("/images/bgnoise.gif");
+  background-repeat: repeat;
+}
+
+
+p.spacer {
+  padding: .5em;
+}
+
+.container {
+  position: relative;
+}
+
+div.right {
+  /*position: fixed;*/
+  float: right;
+  /*margin-right: 1em;*/
+  /*margin-top: 1em;*/
+  padding: 10px 10px 11px;
+}
+
+#logout {
+  padding-left: 1ex;
+}
+#you {
+  color: white;
+}
+
+.sidebar h2 {
+  padding-left: .5ex;
+  padding-right: .5ex;
+}
+h2.selected {
+  background: darkgrey;
+  color: white;
+}
+
+.media-grid li a {
+  position:relative;
+}
+
+.media-grid a .caption {
+  cursor: default;
+  position: absolute;
+  bottom: 1.5ex;
+  left: 1.5ex;
+  color: rgb(90,90,90);
+}
+
+.media-grid a:hover {
+  text-decoration: none;
+}
+
+li.faded a{
+  /*border: 1px solid lightgrey;*/
+  -webkit-transition: 0.1s linear all;
+  -moz-transition: 0.1s linear all;
+  -ms-transition: 0.1s linear all;
+  -o-transition: 0.1s linear all;
+  transition: 0.1s linear all;
+}
+
+
+li.faded:hover img{
+  background: lightyellow;
+}
+
+.tags {
+  display:block;
+  position:relative;
+}
+
+.tag {
+  display: inline;
+  padding: 2px 10px 3px;
+}
+
+.rec {
+  padding-bottom: 1ex;
+}
+
+.rec .url {
+  border: 1px solid grey;
+  background: rgb(240,240,240);
+  display: inline;
+  padding: 1ex 4ex;
+  border-radius: 3px;
+}
+
+.tags {
+  display: inline;
+  padding-left: 1ex;
+}
+.tag.label {
+  background: none;
+}
+
+/*scheme:*/
+/*#233338*/
+/*#5B5A14*/
+/*#C5952E*/
+/*#FAAB62*/
+/*#FA3743*/
+
+
+/*from: http://www.colourlovers.com/lover/lauryn_mack/loveNote*/
+/*931D54*/
+/*D85F13*/
+/*728743*/
+/*E2A109*/
+/*3F1659*/
+
+
+.tag.one {
+  color: #931D54;
+}
+
+.addtag {
+  margin-left: 2ex;
+}
+.circle.one {
+  color: #ffffff;
+  background-color: #57a957;
+  background-repeat: repeat-x;
+  /*background-image: -khtml-gradient(linear, left top, left bottom, from(#62c462), to(#57a957));*/
+  /*background-image: -moz-linear-gradient(top, #62c462, #57a957);*/
+  /*background-image: -ms-linear-gradient(top, #62c462, #57a957);*/
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #62c462), color-stop(100%, #57a957));
+  background-image: -webkit-linear-gradient(top, #62c462, #57a957);
+  /*background-image: -o-linear-gradient(top, #62c462, #57a957);*/
+  /*background-image: linear-gradient(top, #62c462, #57a957);*/
+  /*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#62c462', endColorstr='#57a957', GradientType=0);*/
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  border-color: #57a957 #57a957 #3d773d;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+
+.circle.two,.tag.two {
+  color: #ffffff;
+  background-color: #FDB402;
+  background-repeat: repeat-x;
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#F2D402), to(#FDB402));
+  background-image: -moz-linear-gradient(top, #F2D402, #FDB402);
+  background-image: -ms-linear-gradient(top, #F2D402 #FDB402);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #F2D402), color-stop(100%, #FDB402));
+  background-image: -webkit-linear-gradient(top, #F2D402, #FDB402);
+  background-image: -o-linear-gradient(top, #F2D402, #FDB402);
+  background-image: linear-gradient(top, #F2D402, #FDB402);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F2D402', endColorstr='#FDB402', GradientType=0);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  border-color: #F2D402 #F2D402 #3d773d;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+
+
+
+.circle.three,.tag.three {
+  color: #ffffff;
+  background-color: #339bb9;
+  background-repeat: repeat-x;
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#5bc0de), to(#339bb9));
+  background-image: -moz-linear-gradient(top, #5bc0de, #339bb9);
+  background-image: -ms-linear-gradient(top, #5bc0de, #339bb9);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #5bc0de), color-stop(100%, #339bb9));
+  background-image: -webkit-linear-gradient(top, #5bc0de, #339bb9);
+  background-image: -o-linear-gradient(top, #5bc0de, #339bb9);
+  background-image: linear-gradient(top, #5bc0de, #339bb9);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5bc0de', endColorstr='#339bb9', GradientType=0);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  border-color: #339bb9 #339bb9 #22697d;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}  
+
+.circle {
+  cursor: pointer;
+  display: inline-block;
+  background-color: #e6e6e6;
+  background-repeat: no-repeat;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), color-stop(25%, #ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);
+  background-image: -moz-linear-gradient(top, #ffffff, #ffffff 25%, #e6e6e6);
+  background-image: -ms-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);
+  background-image: -o-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);
+  background-image: linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e6', GradientType=0);
+  padding: 2px 10px 3px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  color: #333;
+  font-size: 13px;
+  line-height: normal;
+  border: 1px solid #ccc;
+  border-bottom-color: #bbb;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 10px;
+  height: 14px;
+  width: 0px;
+  /*-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);*/
+  /*-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);*/
+  /*box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);*/
+  -webkit-transition: 0.1s linear all;
+  -moz-transition: 0.1s linear all;
+  -ms-transition: 0.1s linear all;
+  -o-transition: 0.1s linear all;
+  transition: 0.1s linear all;
+}
+.circle:hover {
+  background-position: 0 -15px;
+  /*color: #333;*/
+  text-decoration: none;
+}
+.circle:focus {
+  outline: 1px dotted #666;
+}
+
+.circleblock {
+  height: 20px;
+  padding-bottom: 15px;
+  position: relative;
+}
+
+.circlename {
+  font-weight: bold;
+  font-size: 14px;
+  top: 0px;
+  position: absolute;
+}
+
+.footer {
+  padding-bottom: 1em;
+  padding-top: 1em;
+  margin-top: 2em;
+  background: lightgrey;
+}

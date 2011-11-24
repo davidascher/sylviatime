@@ -1,0 +1,15 @@
+{
+  "name": "sylviatime",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "2.4.6",
+    "mongodb": "0.9.7",
+    "jade": "0.18.0",
+    "less": "1.1.5",
+    "postprocess": "0.0.2",
+    "connect-cookie-session" : "0.0.2"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}
