@@ -52,7 +52,7 @@ task('load-props', ["install-npm-depends"], function() {
 	}
 	
 	// Build some paths from properties for use later on
-	versionedPath = properties.siteLocation + properties.state + "/.versions/" +
+	versionedPath = properties.siteLocation + '-' + properties.state + "/.versions/" +
 									properties.siteName + "@" + properties.version + "-" + new Date().getTime();
 	livePath = properties.siteLocation + '-' + properties.state + "/" + properties.siteName;
 
