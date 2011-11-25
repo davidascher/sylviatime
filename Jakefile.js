@@ -140,16 +140,16 @@ task('default', ["load-props", "create-versioned-dir", "move-files", "symlink-li
 			upstart;
 	
         var svcName = properties.siteName + "-" + properties.state; 
-	console.log(("    Executing command:\n    $ sudo monit stop " + svcName).grey);
+	console.log(("    Executing command:\n    $ sudo stop " + svcName).grey);
 	// Stop the old version of the app and start the new version with upstart
-	exec("sudo monit stop " + svcName, function (error, stdout, stderr) {
+	exec("sudo stop " + svcName, function (error, stdout, stderr) {
 
 		if (error) {
 			throw error;
 		} else {
-			console.log(("\n    Executing command:\n    $sudo monit start " + svcName).grey);
+			console.log(("\n    Executing command:\n    $sudo start " + svcName).grey);
 
-			exec("sudo monit start " + svcName, function (error, stdout, stderr) {
+			exec("sudo start " + svcName, function (error, stdout, stderr) {
 				console.log("\n + Old instance killed successfully\n".green);
 				if (error) {
 					console.log(" + New instance failed to be put live\n".red);
