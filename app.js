@@ -6,6 +6,7 @@
 const express = require('express'),
 sessions = require('connect-cookie-session'),
 path = require('path'),
+cluster = require('cluster'),
 postprocess = require('postprocess'),
 https = require('https'),
 querystring = require('querystring'),
@@ -281,9 +282,17 @@ db.connect(function(err) {
   if (err) console.log("WARNING: running without a database means no persistence: ", err);
 
   // once connected to the database, start listening for connections
-  app.listen(PORT, IP_ADDRESS, function () {
-    var address = app.address();
-    localHostname = address.address + ':' + address.port
-    console.log("listening on " + localHostname +" in " + app.settings.env + " mode.");
+
+app.listen(PORT, IP_ADDRESS, function () {
+
+  //cluster(app)
+  //  .use(cluster.pidfiles())
+  //  .use(cluster.reload())
+  //  .use(cluster.logger())
+  //  .use(cluster.cli())
+  //  .listen(PORT);
+      var address = app.address();
+      localHostname = address.address + ':' + address.port
+      console.log("listening on " + localHostname +" in " + app.settings.env + " mode.");
   });
 });

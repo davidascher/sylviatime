@@ -5,8 +5,7 @@
 // example code and is just provided for completeness (the point is
 // how you can do authentication with browserid).  
 
-const
-url = require('url'),
+const url = require('url'),
 mongodb = require('mongodb');
 
 var collections = {
