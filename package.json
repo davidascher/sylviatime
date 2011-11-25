@@ -5,6 +5,7 @@
     "express": "2.4.6",
     "mongodb": "0.9.7",
     "jade": "0.18.0",
+    "cluster": "0.7.7",
     "less": "1.1.5",
     "postprocess": "0.0.2",
     "connect-cookie-session" : "0.0.2"
