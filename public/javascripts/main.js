@@ -185,7 +185,7 @@ $(function() {
         format:
           '<div class="row"> \
               <div class="clearfix" id="first">\
-                <label class="xlarge">What are you expecting?</label>\
+                <label class="xlarge">Who are you expecting?</label>\
                 <div class="input">\
                   <input id="what" name="what" size="30" type="text"/>\
                   when?\
