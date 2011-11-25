@@ -54,7 +54,7 @@ task('load-props', ["install-npm-depends"], function() {
 	// Build some paths from properties for use later on
 	versionedPath = properties.siteLocation + properties.state + "/.versions/" +
 									properties.siteName + "@" + properties.version + "-" + new Date().getTime();
-	livePath = properties.siteLocation + properties.state + "/" + properties.siteName;
+	livePath = properties.siteLocation + '-' + properties.state + "/" + properties.siteName;
 
 	console.log("\n + Properties read successfully".green);
 
@@ -139,18 +139,17 @@ task('default', ["load-props", "create-versioned-dir", "move-files", "symlink-li
 			spawn = require('child_process').spawn,
 			upstart;
 	
-	console.log(("    Executing command:\n    $ sudo monit stop " + properties.siteName + "-" + properties.state).grey);
-	// Stop the old version of the app and start the new version with monit
-	exec("sudo monit stop " + properties.siteName + "-" + properties.state, function (error, stdout, stderr) {
+        var svcName = properties.siteName + "-" + properties.state; 
+	console.log(("    Executing command:\n    $ sudo start " + svcName).grey);
+	// Stop the old version of the app and start the new version with upstart
+	exec("sudo stop " + svcName, function (error, stdout, stderr) {
 
 		if (error) {
 			throw error;
 		} else {
-			console.log(("\n    Executing command:\n    $sudo monit start " +
-												properties.siteName + "-" + properties.state).grey);
+			console.log(("\n    Executing command:\n    $sudo start " + svcName).grey);
 
-			exec("sudo monit start " + properties.siteName + "-" + properties.state, function (error, stdout, stderr) {
-
+			exec("sudo start " + svcName, function (error, stdout, stderr) {
 				console.log("\n + Old instance killed successfully\n".green);
 				if (error) {
 					console.log(" + New instance failed to be put live\n".red);
