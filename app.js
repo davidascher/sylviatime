@@ -56,6 +56,7 @@ app.use(express.bodyParser());
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
   // a substitution middleware allows us to easily point at different browserid servers
   app.use(postprocess.middleware(function(req, body) {
     var browseridURL = determineBrowserIDURL(req);
@@ -257,6 +258,12 @@ app.post("/api/set", function (req, res) {
     } else {
       res.json(true);
     }
+  });
+});
+
+app.get('/', function(req, res){
+  res.render('home', {
+    title: 'Sylvia Time'
   });
 });
 
