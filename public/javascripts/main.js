@@ -1,9 +1,8 @@
 google_ad_client = "ca-pub-1528287161481073";
-/* leaderboard */
-google_ad_slot = "7644765582";
+/* test */
+google_ad_slot = "3076862217";
 google_ad_width = 728;
 google_ad_height = 90;
-//-->
 
 
 
