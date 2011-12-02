@@ -196,7 +196,7 @@ app.post("/api/logout", function (req, res) {
 
 // /api/get requires an authenticated session, and accesses the current user's favorite
 // beer out of the database.
-app.get("/api/get", function (req, res) {
+app.get("/api/deadlines", function (req, res) {
   var email;
 
   if (req.session && typeof req.session.email === 'string') email = req.session.email;
@@ -210,7 +210,10 @@ app.get("/api/get", function (req, res) {
 
   if (!havePersistence) {
     console.log("WARNING: get is a no-op!  we have no database configured");
-    return res.json("no database");
+    return res.json([
+      {id:1, what:"xmas", when:"12/25/2011", ready:true},
+      {id:2, what:"new year", when:"1/1/2012", ready:true},
+      ]);
   }
 
   db.get(determineEnvironment(req), email, function(err, beer) {
@@ -226,7 +229,7 @@ app.get("/api/get", function (req, res) {
 
 // /api/set requires an authenticated session, and sets the current user's favorite
 // beer in the database.
-app.post("/api/set", function (req, res) {
+app.post("/api/deadlines", function (req, res) {
   var email = req.session.email;
 
   if (!email) {
