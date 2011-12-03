@@ -14,14 +14,23 @@ body {
   width: 100%;
 }
 
-.colorpicker {
-  z-index: 100;
-  position: absolute;
+.countdown-container {
+  position: relative;
+}
+#colorpicker-container {
+  position: relative;
   background: white;
   border-radius: 4px;
   border: 1px solid grey;
-  width: 220px;
-  height: 220px;
+  width: 196px;
+  height: 196px;
+  z-index: 100;
+}
+
+.colorpicker-placeholder {
+  position: relative;
+  float: left;
+  display: inline;
 }
 
 .colorclose {
@@ -29,6 +38,12 @@ body {
   bottom: .5em;
   right: 1em;
 }
+.colorclose:hover {
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+}
+
 .yui-picker-swatch, .yui-picker-websafe-swatch, .yui-picker-controls {
   display: none;
 }

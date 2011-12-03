@@ -16,6 +16,7 @@ function setSessions(val) {
   }
 } 
 
+
 // when the user is found to be logged in we'll update the UI, fetch and
 // display the user's favorite beer from the server, and set up handlers to
 // wait for user input (specifying their favorite beer).
@@ -55,11 +56,12 @@ function loggedIn(email, immediate) {
       numDays: 0,
       ready: false,
       dateText: '',
-      color: '34a044'
+      color: '#34a044'
     },
     view: { 
       format:
-        '<div class="controls row"> \
+        '<div class="countdown-container">\
+          <div class="controls row"> \
             <div class="clearfix" id="first">\
               <label class="xlarge">What are you waiting for?</label>\
               <div class="input">\
@@ -69,14 +71,15 @@ function loggedIn(email, immediate) {
                 <button id="create" class="create btn">create countdown!</button>\
               </div>\
             </div>\
-        </div>\
-        <div class="row" id="countdown">\
-          <div class="tweak">\
-            <div class="clearfix">\
-              <div class="hero-unit">\
-                <h1 class="counter" data-bind="text"/>\
-                <a class="edit">tweak</a>\
-                <a class="delete">delete</a>\
+          </div>\
+          <div class="row" id="countdown">\
+            <div class="tweak">\
+              <div class="clearfix">\
+                <div class="hero-unit">\
+                  <h1 class="counter" data-bind="text"/>\
+                  <a class="edit">tweak</a>\
+                  <a class="delete">delete</a>\
+                </div>\
               </div>\
             </div>\
           </div>\
@@ -89,20 +92,19 @@ function loggedIn(email, immediate) {
         this.save();
       },
       'click .colorclose': function() {
-        colorpicker.addClass('hidden');
-        // this.view.$(".colorpicker").hide();
+        $("#colorpicker-container").hide();
       },
       'click .edit': function() {
         var self = this;
         currentDeadline = self;
         this.view.$("#create").text('save');
         this.model.set({ready: false});
-        colorpicker.removeClass('hidden');
-        self.view.$().append(colorpicker);
         var coord = self.view.$().offset();
-        colorpicker.setStyle('left', '20px');
-        colorpicker.setStyle('top', String(coord.top) + 'px');
-        colorpicker.setValue(YAHOO.util.Color.hex2rgb(self.model.get('color')));
+        var cp = $("#colorpicker-container");
+        colorpicker.setColor(self.model.get('color'));
+        cp.appendTo(self.view.$()[0])
+        cp.css({'position': 'absolute', 'top': '60px', 'right':'-130px'});
+        cp.fadeIn();
       },
       'click .delete': function() {
         if (confirm('really delete this deadline?')) {
@@ -131,7 +133,7 @@ function loggedIn(email, immediate) {
       create: function() {
         var self = this;
         try {
-          self.view.$(".hero-unit").css('backgroundColor', "#"+self.model.get('color'));
+          self.view.$(".hero-unit").css('backgroundColor', self.model.get('color'));
         } catch (e) {
           console.log(e);
         }
@@ -147,7 +149,6 @@ function loggedIn(email, immediate) {
     },
 
     computeDelta: function(dateText) {
-      console.log("in computeDelta, dateText is", dateText)
       var then = new Date(dateText);
       var now = new Date(Date.now());
       var one_day = 1000*60*60*24;
@@ -155,7 +156,6 @@ function loggedIn(email, immediate) {
       delta = then.getTime() - now.getTime();
       numDays = Math.ceil(delta / one_day);
       this.model.set({'numDays': numDays});
-      console.log({'when':dateText, 'numDays': numDays})
     },
 
     updateText: function() {
@@ -163,7 +163,6 @@ function loggedIn(email, immediate) {
         var txt;
         var what = this.model.get('what');
         var numDays = this.model.get('numDays');
-        console.log("in updateText, what=", what, "numDays", numDays);
         if (what){
           if (numDays == 1) 
             txt = what + " is tomorrow!";
@@ -205,7 +204,6 @@ function loggedIn(email, immediate) {
 
 
 function tellbrowser(data) {
-  console.log("in tellbrowser, data =" + JSON.stringify(data));
   try {
     var customEvent = document.createEvent('Event');
     customEvent.initEvent('loggedinEvent', true, true);
@@ -308,12 +306,11 @@ $(function() {
             <div id="picture"></div>\
             <div id="you" class="login"></div>\
           </div>\
-          <div id="colorpicker" class="hidden colorpicker"><a class="colorclose">close</a></div>\
+          <div id="colorpicker-container" class="hidden"><div id="colorpicker-placeholder"></div><span class="colorclose">X</span></div>\
           <div class="container" id="everything"><div id="main"></div><a class="new">new deadline</a></div>'},
       controller: {
         'click .colorclose': function() {
-          console.log('in colorclose handler');
-          colorpicker.addClass('hidden');
+          $("#colorpicker-container").hide();
         },
         'click .new': function() {
           var newdeadline = $$(deadline);
@@ -323,6 +320,12 @@ $(function() {
     });
     $$.document.append(app);
 
+    colorpicker = $.farbtastic("#colorpicker-placeholder", function(color) {
+      if (currentDeadline) {
+        currentDeadline.view.$(".hero-unit").css('backgroundColor', color);
+        currentDeadline.model.set({'color': color});
+      }
+    })
     deadlines = $$(
       {
         view: {
@@ -338,25 +341,6 @@ $(function() {
       }
     ).persist($$.adapter.restful, {collection:'deadlines'});
     app.append(deadlines, '#main');
-
-
-    colorpicker = new YAHOO.widget.ColorPicker('colorpicker', { 
-        showcontrols: false, 
-        images: { 
-            PICKER_THUMB: "../../images/picker_thumb.png", 
-            HUE_THUMB: "../../images/hue_thumb.png" 
-        } 
-    }); 
-    colorpicker.addClass('hidden');
-    var onRgbChange = function(o) { 
-      var rgb = YAHOO.util.Color.rgb2hex(o.newValue);
-      if (currentDeadline) {
-        currentDeadline.view.$(".hero-unit").css('backgroundColor', "#"+rgb);
-        currentDeadline.model.set({'color': rgb});
-      }
-    } 
-    colorpicker.on("rgbChange", onRgbChange); 
-
     $.get('/api/whoami', function (res) {
       if (res === null) loggedOut();
       else loggedIn(res, true);
