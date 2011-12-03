@@ -58,6 +58,7 @@ function loggedIn(email, immediate) {
     view: { 
       format:
         '<div class="controls row"> \
+            <div id="colr" class="hidden colorpicker"><a class="colorclose">close</a></div>\
             <div class="clearfix" id="first">\
               <label class="xlarge">What are you waiting for?</label>\
               <div class="input">\
@@ -86,9 +87,35 @@ function loggedIn(email, immediate) {
         this.updateText();
         this.save();
       },
+      'click .colorclose': function() {
+        this.view.$(".colorpicker").hide();
+      },
       'click .edit': function() {
+        try {
+        var picker = new YAHOO.widget.ColorPicker(this.view.$(".colorpicker")[0], { 
+            showcontrols: false, 
+            images: { 
+                PICKER_THUMB: "../../images/picker_thumb.png", 
+                HUE_THUMB: "../../images/hue_thumb.png" 
+            } 
+        }); 
+        var self = this;
+        var onRgbChange = function(o) { 
+          var r = o.newValue[0];
+          var g = o.newValue[1];
+          var b = o.newValue[2];
+          var rgb = 'rgb('+r+','+g+','+b+')';
+          console.log(rgb);
+          self.view.$(".hero-unit").css('backgroundColor', rgb);
+        } 
+        picker.on("rgbChange", onRgbChange); 
+        } catch (e) {
+          console.log(e);
+        }
         this.view.$("#create").text('save');
         this.model.set({ready: false});
+        this.view.$(".colorpicker").show();
+           
       },
       'click .delete': function() {
         if (confirm('really delete this deadline?')) {
