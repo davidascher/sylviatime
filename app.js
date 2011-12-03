@@ -10,9 +10,10 @@ cluster = require('cluster'),
 postprocess = require('postprocess'),
 https = require('https'),
 querystring = require('querystring'),
-db = require('./db.js'),
 url = require('url');
 less = require('less');
+var redis = require("redis"),
+db = redis.createClient();
 
 var app = module.exports = express.createServer();
 
@@ -42,8 +43,6 @@ const PORT = process.env.VCAP_APP_PORT || 8003;
 // if no 'Host' header is present on incoming login requests.
 var localHostname = undefined;
 
-// a global flag indicating whether we have persistence or not.
-var havePersistence;
 
 // do some logging
 app.use(express.logger({ format: 'dev' }));
@@ -161,9 +160,7 @@ app.post("/api/login", function (req, res) {
             } else {
               console.log("failed to verify assertion:", verifierResp.reason);
             }
-            console.log("GOT EMAIL: ", email)
             res.json(email);
-            console.log('did the res.json thing\n')
           } catch(e) {
             console.log("SOME OTHER EXCEPTION: ", e);
             // bogus response from verifier!  return null
@@ -208,29 +205,46 @@ app.get("/api/deadlines", function (req, res) {
     return;
   }
 
-  if (!havePersistence) {
-    console.log("WARNING: get is a no-op!  we have no database configured");
-    return res.json([
-      {id:1, what:"xmas", when:"12/25/2011", ready:true},
-      {id:2, what:"new year", when:"1/1/2012", ready:true},
-      ]);
-  }
+  var key = email+'-deadlines';
 
-  db.get(determineEnvironment(req), email, function(err, beer) {
+  db.smembers(key, function(err, deadline_keys) {
     if (err) {
-      console.log("error getting beer for", email); 
+      console.log("error getting deadline_keys for", email); 
       res.writeHead(500);
       res.end();
-    } else {
-      res.json(beer);
+      return;
     }
+    console.log('deadline_keys:', deadline_keys);
+    if (deadline_keys.length == 0) {
+      return res.json([
+        {id:1, what:"xmas", when:"12/25/2011", ready:true},
+        {id:2, what:"new year", when:"1/1/2012", ready:true},
+        ]);
+    }
+    db.mget(deadline_keys, function(err, deadlines) {
+      if (err) {
+        console.log("error getting deadlines for", deadline_keys); 
+        res.writeHead(500);
+        res.end();
+        return;
+      }
+
+      console.log(deadline_keys);
+      console.log(deadlines);
+      deadlines_objs = [];
+      for (var i=0; i < deadlines.length; i++) {
+        console.log(deadlines[i]);
+        deadlines_objs.push(JSON.parse(deadlines[i]));
+      }
+      res.json(deadlines_objs);
+    });
   });
 });
 
-// /api/set requires an authenticated session, and sets the current user's favorite
-// beer in the database.
-app.post("/api/deadlines", function (req, res) {
+
+app.put("/api/deadlines/:id", function(req, res) {
   var email = req.session.email;
+  console.log("changing deadline to", JSON.stringify(req.body));
 
   if (!email) {
     res.writeHead(400, {"Content-Type": "text/plain"});
@@ -238,31 +252,52 @@ app.post("/api/deadlines", function (req, res) {
     res.end();
     return;
   }
+  var deadline_key = email + '-deadline-' + req.params.id;
+  var deadlines_key = email + '-deadlines';
+  console.log("BODY", req.body);
 
-  var beer = req.body.beer;
+  db.set(deadline_key, JSON.stringify(req.body), function(err) {
+    console.log("setting deadline ", deadline_key, "to", JSON.stringify(req.body)); 
+    if (err) {
+      res.writeHead(500);
+      res.end();
+      return;
+    } 
+  });
+})
 
-  if (!beer) {
+app.post("/api/deadlines/:id", function(req, res) {
+  var email = req.session.email;
+  console.log("adding deadline", JSON.stringify(req.body));
+
+  if (!email) {
     res.writeHead(400, {"Content-Type": "text/plain"});
-    res.write("Bad Request: a 'beer' parameter is required to set your favorite beer");
+    res.write("Bad Request: you must be authenticated to get your beer");
     res.end();
     return;
   }
+  var deadline_key = email + '-deadline-' + req.params.id;
+  var deadlines_key = email + '-deadlines';
+  console.log("BODY", req.body);
 
-  if (!havePersistence) {
-    console.log("WARNING: set is a no-op!  we have no database configured");
-    return res.json(true);
-  }
-
-  db.set(determineEnvironment(req), email, beer, function(err) {
+  db.set(deadline_key, JSON.stringify(req.body), function(err) {
+    console.log("setting deadline ", deadline_key, "to", JSON.stringify(req.body)); 
     if (err) {
-      console.log("setting beer for", email, "to", beer); 
       res.writeHead(500);
       res.end();
-    } else {
+      return;
+    } 
+    db.sadd(deadlines_key, deadline_key, function(err) {
+      if (err) {
+        console.log("error doing sadd of ", deadline_key, "to", deadlines_key);
+        res.writeHead(500);
+        res.end();
+        return;
+      }
       res.json(true);
-    }
+    });
   });
-});
+})
 
 app.get('/', function(req, res){
   res.render('home', {
@@ -270,32 +305,8 @@ app.get('/', function(req, res){
   });
 });
 
-app.get('/popup', function(req, res){
-  console.log("in popup route");
-  res.render('popup', {
-    title: 'Web Cool Hunter'
-  });
-});
-
-
-// connect up the database!
-db.connect(function(err) {
-  havePersistence = (err ? false : true);
-
-  if (err) console.log("WARNING: running without a database means no persistence: ", err);
-
-  // once connected to the database, start listening for connections
-
 app.listen(PORT, IP_ADDRESS, function () {
-
-  //cluster(app)
-  //  .use(cluster.pidfiles())
-  //  .use(cluster.reload())
-  //  .use(cluster.logger())
-  //  .use(cluster.cli())
-  //  .listen(PORT);
-      var address = app.address();
-      localHostname = address.address + ':' + address.port
-      console.log("listening on " + localHostname +" in " + app.settings.env + " mode.");
-  });
+    var address = app.address();
+    localHostname = address.address + ':' + address.port
+    console.log("listening on " + localHostname +" in " + app.settings.env + " mode.");
 });

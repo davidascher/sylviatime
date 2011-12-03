@@ -80,6 +80,8 @@ function loggedIn(email, immediate) {
     controller: {
       'click .create': function() {
         this.model.set({ready:true});
+        console.log(this.model);
+        this.save();
       },
       'click .edit': function() {
         this.view.$("#create").text('save');
@@ -96,7 +98,7 @@ function loggedIn(email, immediate) {
         this.computeDelta(this.model.get('when'));
 
         // feels hackish, should figure out how to set visibility based on ready value at load time
-        this.model.set({ready:this.model.get('ready')}); 
+        //this.model.set({ready:this.model.get('ready')}); 
 
         this.updateState();
         console.log(this.model);
@@ -115,6 +117,11 @@ function loggedIn(email, immediate) {
         $("#what").keyup(function() {
           self.updateState();
         })
+        if (this.model.get('ready')) {
+          this.view.$("#first").hide();
+        } else {
+          this.view.$("#first").show();
+        }
       }
     },
 
@@ -127,6 +134,7 @@ function loggedIn(email, immediate) {
       numDays = Math.ceil(delta / one_day);
       this.model.numDays = numDays;
       this.model.dateText = dateText;
+      this.model.set({'when':dateText});
     },
 
     updateState: function() {
@@ -145,6 +153,7 @@ function loggedIn(email, immediate) {
         else 
           txt = what + " was " + (-1 * numDays) + " days ago!";
         this.model.set({text:txt});
+        this.model.set({'what':what});
       }
     }
   }).persist($$.adapter.restful, {collection:'deadlines'});
@@ -291,7 +300,7 @@ $(function() {
           },
         }
       }
-       ).persist();
+       ).persist($$.adapter.restful, {collection:'deadlines'});
     app.append(deadlines);
 
     $.get('/api/whoami', function (res) {
