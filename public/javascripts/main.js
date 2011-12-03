@@ -74,6 +74,7 @@ function loggedIn(email, immediate) {
               <div class="hero-unit">\
                 <h1 class="counter" data-bind="text"/>\
                 <a class="edit">tweak</a>\
+                <a class="delete">delete</a>\
               </div>\
             </div>\
           </div>\
@@ -88,6 +89,12 @@ function loggedIn(email, immediate) {
       'click .edit': function() {
         this.view.$("#create").text('save');
         this.model.set({ready: false});
+      },
+      'click .delete': function() {
+        if (confirm('really delete this deadline?')) {
+          this.erase();
+          this.destroy();
+        }
       },
       'change:ready': function() {
         if (this.model.get('ready')) {
@@ -282,7 +289,11 @@ $(function() {
   try {
 
     app = $$({
-      view: {format: '<div class="container" id="everything"><div id="main"></div><a class="new">new deadline</a></div>'},
+      view: {format: '<div id="loginInfo">\
+            <div id="picture"></div>\
+            <div id="you" class="login"></div>\
+          </div>\
+          <div class="container" id="everything"><div id="main"></div><a class="new">new deadline</a></div>'},
       controller: {
         'click .new': function() {
           var newdeadline = $$(deadline);
@@ -291,12 +302,6 @@ $(function() {
       }
     });
     $$.document.append(app);
-
-    var signin = $$({}, '<div id="loginInfo">\
-            <div id="picture"></div>\
-            <div id="you" class="login"></div>\
-          </div>');
-    app.append(signin);
 
     deadlines = $$(
       {

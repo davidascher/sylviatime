@@ -252,20 +252,52 @@ app.put("/api/deadlines/:id", function(req, res) {
     res.end();
     return;
   }
-  var deadline_key = email + '-deadline-' + req.params.id;
+  var deadline_key = req.params.id;
   var deadlines_key = email + '-deadlines';
-  console.log("BODY", req.body);
+  var deadline = req.body;
 
   db.set(deadline_key, JSON.stringify(req.body), function(err) {
-    console.log("setting deadline ", deadline_key, "to", JSON.stringify(req.body)); 
+    console.log("setting deadline ", deadline_key, "to", JSON.stringify(deadline)); 
     if (err) {
       res.writeHead(500);
       res.end();
       return;
     } 
   });
-})
+});
 
+app.delete("/api/deadlines/:id", function(req, res) {
+  var email = req.session.email;
+  console.log("adding deadline", JSON.stringify(req.body));
+
+  if (!email) {
+    res.writeHead(400, {"Content-Type": "text/plain"});
+    res.write("Bad Request: you must be authenticated to delete a deadline");
+    res.end();
+    return;
+  }
+  var deadline_key = req.params.id;
+  var deadlines_key = email + '-deadlines';
+  var deadline = req.body;
+
+  db.del(deadline_key, function(err) {
+    // console.log("setting deadline ", deadline_key, "to", JSON.stringify(req.body)); 
+    if (err) {
+      res.writeHead(500);
+      res.end();
+      return;
+    } 
+    db.srem(deadlines_key, deadline_key, function(err) {
+      if (err) {
+        console.log("error doing srem of ", deadline_key, "from", deadlines_key);
+        res.writeHead(500);
+        res.end();
+        return;
+      }
+      res.json(true);
+    });
+  });  
+});
 
 app.post("/api/deadlines", function(req, res) {
   var email = req.session.email;
@@ -279,11 +311,13 @@ app.post("/api/deadlines", function(req, res) {
   }
 
   var deadlines_key = email + '-deadlines';
+  var deadline = req.body;
   db.scard(deadlines_key, function(err, count) {
 
     var deadline_key = email + '-deadline-' + String(count + 1);
+    deadline['id'] = deadline_key;
 
-    db.set(deadline_key, JSON.stringify(req.body), function(err) {
+    db.set(deadline_key, JSON.stringify(deadline), function(err) {
       // console.log("setting deadline ", deadline_key, "to", JSON.stringify(req.body)); 
       if (err) {
         res.writeHead(500);

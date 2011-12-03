@@ -5,16 +5,21 @@ body {
   background-repeat: repeat;
 }
 
-#loginInfo, #you, #picture {
+#you, #picture {
   display: inline;
 }
 
-#container {
+#loginInfo {
+  display: block;
+  width: 100%;
+}
+
+body, #container {
   position:relative;
 }
 
 #logout {
-  position: fixed;
+  position: absolute;
   right: 1em;
   top: 0.5em;
 }
@@ -24,7 +29,7 @@ body {
 }
 
 #loginInfo {
-  position: fixed;
+  position: absolute;
   left: 1em;
   top: 0.5em;
 }
@@ -51,6 +56,14 @@ body {
   top: 1em;
   color: white;
 }
+
+.hero-unit .delete {
+  position: absolute;
+  right: 1em;
+  bottom: 1em;
+  color: white;
+}
+
 
 p.spacer {
   padding: .5em;
