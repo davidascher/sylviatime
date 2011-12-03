@@ -61,17 +61,6 @@ function loggedIn(email, immediate) {
     view: { 
       format:
         '<div class="countdown-container">\
-          <div class="controls row"> \
-            <div class="clearfix" id="first">\
-              <label class="xlarge">What are you waiting for?</label>\
-              <div class="input">\
-                <input id="what" class="what" data-bind="what" name="what" size="30" type="text"/>\
-                when?\
-                <input class="large datepicker" data-bind="when" name="when" size="30" type="text"/>\
-                <button id="create" class="create btn">create countdown!</button>\
-              </div>\
-            </div>\
-          </div>\
           <div class="row" id="countdown">\
             <div class="tweak">\
               <div class="clearfix">\
@@ -83,12 +72,24 @@ function loggedIn(email, immediate) {
               </div>\
             </div>\
           </div>\
+          <div class="controls row"> \
+            <div class="clearfix" id="first">\
+              <label class="xlarge">What are you waiting for?</label>\
+              <div class="input">\
+                <input id="what" class="what" data-bind="what" name="what" size="30" type="text"/>\
+                when?\
+                <input class="large datepicker" data-bind="when" name="when" size="30" type="text"/>\
+                <button id="create" class="create btn">create countdown!</button>\
+              </div>\
+            </div>\
+          </div>\
         </div>'
     },
     controller: {
       'click .create': function() {
         this.model.set({ready:true});
         this.updateText();
+        $("#colorpicker-container").hide();
         this.save();
       },
       'click .colorclose': function() {
@@ -103,7 +104,7 @@ function loggedIn(email, immediate) {
         var cp = $("#colorpicker-container");
         colorpicker.setColor(self.model.get('color'));
         cp.appendTo(self.view.$()[0])
-        cp.css({'position': 'absolute', 'top': '60px', 'right':'-130px'});
+        cp.css({'position': 'absolute', 'bottom': '0', 'right':'-130px'});
         cp.fadeIn();
       },
       'click .delete': function() {
@@ -132,11 +133,7 @@ function loggedIn(email, immediate) {
       },
       create: function() {
         var self = this;
-        try {
-          self.view.$(".hero-unit").css('backgroundColor', self.model.get('color'));
-        } catch (e) {
-          console.log(e);
-        }
+        self.view.$(".hero-unit").css('backgroundColor', self.model.get('color'));
         self.view.$( ".datepicker" ).datepicker();
         if (this.model.get('ready')) {
           this.view.$("#first").hide();
