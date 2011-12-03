@@ -83,7 +83,7 @@ function loggedIn(email, immediate) {
     controller: {
       'click .create': function() {
         this.model.set({ready:true});
-        console.log(this.model);
+        this.updateText();
         this.save();
       },
       'click .edit': function() {
@@ -105,18 +105,14 @@ function loggedIn(email, immediate) {
       },
       update: function() {
         this.computeDelta(this.model.get('when'));
-
-        // feels hackish, should figure out how to set visibility based on ready value at load time
-        //this.model.set({ready:this.model.get('ready')}); 
-
-        this.updateState();
-        console.log(this.model);
+        this.updateText();
       },
       'change:what': function() {
-        this.updateState();
+        this.updateText();
       },
-      'keyup #what': function() {
-        this.updateState();
+      'change:when': function() {
+        this.computeDelta(this.model.get('when'));
+        this.updateText();
       },
       create: function() {
         var self = this;
@@ -139,17 +135,17 @@ function loggedIn(email, immediate) {
       var delta, numDays;
       delta = then.getTime() - now.getTime();
       numDays = Math.ceil(delta / one_day);
-      this.model.set({'when':dateText, 'numDays': numDays});
+      this.model.set({'numDays': numDays});
       console.log({'when':dateText, 'numDays': numDays})
     },
 
-    updateState: function() {
+    updateText: function() {
       try {
         var txt;
         var what = this.model.get('what');
         var numDays = this.model.get('numDays');
-        console.log("in updateState, what=", what, "numDays", numDays);
-        if (numDays && what){
+        console.log("in updateText, what=", what, "numDays", numDays);
+        if (what){
           if (numDays == 1) 
             txt = what + " is tomorrow!";
           else if (numDays > 1)
