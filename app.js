@@ -14,6 +14,7 @@ url = require('url');
 less = require('less');
 var redis = require("redis"),
 db = redis.createClient();
+var RedisStore = require('connect-redis')(express);
 
 var app = module.exports = express.createServer();
 
@@ -46,10 +47,9 @@ var localHostname = undefined;
 
 // do some logging
 app.use(express.logger({ format: 'dev' }));
-
 // parse cookies
 app.use(express.cookieParser());
-
+app.use(express.session({ secret: COOKIE_SECRET, store: new RedisStore }));
 // parse post bodies
 app.use(express.bodyParser());
 
@@ -72,7 +72,7 @@ app.use(function (req, res, next) {
   if (/^\/api/.test(req.url)) {
     return sessions({
       secret: COOKIE_SECRET,
-      key: 'myfavoritebeer_session',
+      key: 'sylviatime_session',
       cookie: {
         path: '/api',
         httpOnly: true,
@@ -143,15 +143,14 @@ app.post("/api/login", function (req, res) {
     vres.on('data', function(chunk) { body+=chunk; } )
         .on('end', function() {
           try {
-            console.log("body = " + body);
             try {
               var verifierResp = JSON.parse(body);
             } catch (e) {
               console.log("non-JSON response from verifier:" + body.toString());
             }
-            console.log("verifierResp: " + verifierResp);
-            console.log("verifierResp.status: " + verifierResp.status);
-            console.log("verifierResp.email: " + verifierResp.email);
+            // console.log("verifierResp: " + verifierResp);
+            // console.log("verifierResp.status: " + verifierResp.status);
+            // console.log("verifierResp.email: " + verifierResp.email);
             var valid = verifierResp && verifierResp.status === "okay";
             var email = valid ? verifierResp.email : null;
             req.session.email = email;

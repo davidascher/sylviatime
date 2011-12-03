@@ -24,6 +24,8 @@ body {
   border: 1px solid grey;
   width: 196px;
   height: 196px;
+  bottom: 2em;
+  right: -80px;
   z-index: 100;
 }
 
@@ -68,8 +70,12 @@ body, #container {
   top: 0.5em;
 }
 
-#tweak {
-  padding-top: 2em;
+.controls {
+  padding-bottom: 2em;
+}
+
+#countdown {
+  padding-top: 1em;
   margin-left: 3em;
   padding-left: 3em;
   padding-right: 3em;
@@ -81,7 +87,7 @@ body, #container {
 }
 
 .hero-unit h1 {
-  color: white;
+  /*color: white;*/
 }
 
 .hero-unit .edit {

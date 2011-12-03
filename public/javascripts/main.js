@@ -16,6 +16,36 @@ function setSessions(val) {
   }
 } 
 
+// this is a fix for the jQuery slide effects
+function slideToggle(el, bShow){
+  var $el = $(el), height = $el.data("originalHeight"), visible = $el.is(":visible");
+  
+  // if the bShow isn't present, get the current visibility and reverse it
+  if( arguments.length == 1 ) bShow = !visible;
+  
+  // if the current visiblilty is the same as the requested state, cancel
+  if( bShow == visible ) return false;
+  
+  // get the original height
+  if( !height ){
+    // get original height
+    height = $el.show().height();
+    // update the height
+    $el.data("originalHeight", height);
+    // if the element was hidden, hide it again
+    if( !visible ) $el.hide().css({height: 0});
+  }
+
+  // expand the knowledge (instead of slideDown/Up, use custom animation which applies fix)
+  if( bShow ){
+    $el.show().animate({height: height}, {duration: 250});
+  } else {
+    $el.animate({height: 0}, {duration: 250, complete:function (){
+        $el.hide();
+      }
+    });
+  }
+}
 
 // when the user is found to be logged in we'll update the UI, fetch and
 // display the user's favorite beer from the server, and set up handlers to
@@ -61,18 +91,16 @@ function loggedIn(email, immediate) {
     view: { 
       format:
         '<div class="countdown-container">\
-          <div class="row" id="countdown">\
-            <div class="tweak">\
+          <div class="row countdown" id="countdown">\
               <div class="clearfix">\
                 <div class="hero-unit">\
                   <h1 class="counter" data-bind="text"/>\
                   <a class="edit">tweak</a>\
-                  <a class="delete">delete</a>\
+                  <a class="delete"><img src="/images/trash.png"/></a>\
                 </div>\
-              </div>\
             </div>\
           </div>\
-          <div class="controls row"> \
+          <div class="controls hidden row"> \
             <div class="clearfix" id="first">\
               <label class="xlarge">What are you waiting for?</label>\
               <div class="input">\
@@ -97,16 +125,26 @@ function loggedIn(email, immediate) {
       },
       'click .edit': function() {
         var self = this;
+        if (this.view.$(".edit").text() == 'done') {
+          this.view.$(".edit").text('tweak')
+          this.model.set({ready:true});
+          this.updateText();
+          $("#colorpicker-container").hide();
+          this.save();
+          return;
+        }
         currentDeadline = self;
-        this.view.$("#create").text('save');
+        this.view.$("#create").hide();
         this.model.set({ready: false});
         var coord = self.view.$().offset();
         var cp = $("#colorpicker-container");
         colorpicker.setColor(self.model.get('color'));
         cp.appendTo(self.view.$()[0])
-        cp.css({'position': 'absolute', 'bottom': '0', 'right':'-130px'});
+        cp.css({'position': 'absolute'});
         cp.fadeIn();
+        this.view.$(".edit").text('done');
       },
+
       'click .delete': function() {
         if (confirm('really delete this deadline?')) {
           this.erase();
@@ -115,9 +153,9 @@ function loggedIn(email, immediate) {
       },
       'change:ready': function() {
         if (this.model.get('ready')) {
-          this.view.$("#first").hide();
+          this.view.$(".controls").slideUp();
         } else {
-          this.view.$("#first").show();
+          slideToggle(this.view.$(".controls"));
         }
       },
       update: function() {
@@ -131,18 +169,30 @@ function loggedIn(email, immediate) {
         this.computeDelta(this.model.get('when'));
         this.updateText();
       },
+      'change:color': function() {
+        this.updateColor();
+      },
       create: function() {
         var self = this;
         self.view.$(".hero-unit").css('backgroundColor', self.model.get('color'));
         self.view.$( ".datepicker" ).datepicker();
         if (this.model.get('ready')) {
-          this.view.$("#first").hide();
+          this.view.$(".controls").slideUp();
           this.view.$("#countdown").show();
         } else {
-          this.view.$("#first").show();
+          this.view.$(".controls").slideDown();
           this.view.$("#countdown").hide();
         }
+        this.updateColor();
       }
+    },
+    updateColor: function() {
+      var deadline = this.view.$(".hero-unit");
+      var color = this.model.get('color');
+      deadline.css('backgroundColor', color);
+      var textcolor = idealTextColor(color);
+      this.view.$(".counter").css('color',textcolor);
+      this.view.$(".edit").css('color',textcolor);
     },
 
     computeDelta: function(dateText) {
@@ -275,9 +325,87 @@ if (document.addEventListener) {
   document.addEventListener("logout", logout, false);
 }
 
+  // Converts RGB to HEX
+  // http://stackoverflow.com/questions/638948/background-color-hex-to-javascript-variable-jquery
+  function rgb2hex(rgbString) {
+    var parts = rgbString.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+
+    if (!parts) { return; }
+
+    delete (parts[0]);
+    
+    for (var i = 1; i <= 3; ++i) {
+        parts[i] = parseInt(parts[i]).toString(16);
+        if (parts[i].length == 1) parts[i] = '0' + parts[i];
+    }
+    return '#'+parts.join('');
+
+  }
+/*
+* Converts an RGB color to HSL
+* Parameters
+*     rgbArr : 3-element array containing the RGB values
+*
+* Result : 3-element array containing the HSL values
+*
+*/
+function rgb2hsl(rgbArr){
+    var r1 = rgbArr[0] / 255;
+    var g1 = rgbArr[1] / 255;
+    var b1 = rgbArr[2] / 255;
+
+    var maxColor = Math.max(r1,g1,b1);
+    var minColor = Math.min(r1,g1,b1);
+    //Calculate L:
+    var L = (maxColor + minColor) / 2 ;
+    var S = 0;
+    var H = 0;
+    if(maxColor != minColor){
+        //Calculate S:
+        if(L < 0.5){
+            S = (maxColor - minColor) / (maxColor + minColor);
+        }else{
+            S = (maxColor - minColor) / (2.0 - maxColor - minColor);
+        }
+        //Calculate H:
+        if(r1 == maxColor){
+            H = (g1-b1) / (maxColor - minColor);
+        }else if(g1 == maxColor){
+            H = 2.0 + (b1 - r1) / (maxColor - minColor);
+        }else{
+            H = 4.0 + (r1 - g1) / (maxColor - minColor);
+        }
+    }
+
+    L = L * 100;
+    S = S * 100;
+    H = H * 60;
+    if(H<0){
+        H += 360;
+    }
+    var result = [H, S, L]; 
+    return result;
+}
+  function idealTextColor(bgColor) {
+    if (!bgColor) { return; }
+    var hsl = rgb2hsl(hex2rgb(bgColor));
+    if (hsl[2] > 50) 
+      return "#333";
+    return "#eee";
+  }
+  function hex2rgb(color) {       
+
+      var r = color.substring(1, 3);
+      var g = color.substring(3, 5);
+      var b = color.substring(5, 7);
+
+      return [parseInt(r, 16), parseInt(g, 16), parseInt(b, 16)];
+  }
+
+
+
 
 function loggedOut() {
-  console.log("in loggedout");
   $(".row").hide();
   $("#loginInfo").show();
   $('.intro').fadeIn(300);
@@ -319,7 +447,6 @@ $(function() {
 
     colorpicker = $.farbtastic("#colorpicker-placeholder", function(color) {
       if (currentDeadline) {
-        currentDeadline.view.$(".hero-unit").css('backgroundColor', color);
         currentDeadline.model.set({'color': color});
       }
     })
