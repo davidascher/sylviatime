@@ -5,7 +5,9 @@ google_ad_width = 728;
 google_ad_height = 90;
 //-->
 
-
+var deadline;
+var now = new Date(Date.now());
+var tomorrow_string = new Date(now.getTime() + (24 * 60 * 60 * 1000)).toLocaleDateString();
 
 function setSessions(val) {
   if (navigator.id) {
@@ -44,10 +46,10 @@ function loggedIn(email, immediate) {
     });
   }
 
-  var deadline = $$({
+  deadline = $$({
     model: {
-      what: 'default_what',
-      when: 'default_when',
+      what: '',
+      when: tomorrow_string,
       text: '',
       numDays: 0,
       ready: false,
@@ -61,17 +63,17 @@ function loggedIn(email, immediate) {
               <div class="input">\
                 <input id="what" class="what" data-bind="what" name="what" size="30" type="text"/>\
                 when?\
-                <input class="large" id="datepicker" data-bind="when" name="when" size="30" type="text"/>\
+                <input class="large datepicker" data-bind="when" name="when" size="30" type="text"/>\
                 <button id="create" class="create btn hidden">create countdown!</button>\
               </div>\
             </div>\
         </div>\
-        <div class="row hidden" id="countdown">\
+        <div class="row" id="countdown">\
           <div class="tweak">\
             <div class="clearfix">\
               <div class="hero-unit">\
                 <h1 class="counter" data-bind="text"/>\
-                <a class="edit">change</a>\
+                <a class="edit">tweak</a>\
               </div>\
             </div>\
           </div>\
@@ -103,57 +105,64 @@ function loggedIn(email, immediate) {
         this.updateState();
         console.log(this.model);
       },
+      'change:what': function() {
+        this.updateState();
+      },
+      'keyup #what': function() {
+        this.updateState();
+      },
       create: function() {
         var self = this;
-        self.view.$( "#datepicker" ).datepicker({
-            onClose: function(dateText) {
-              self.computeDelta(dateText)
-              self.updateState();
-            }
-        });
-        $("#what").change(function() {
-          self.updateState();
-        })
-        $("#what").keyup(function() {
-          self.updateState();
-        })
+        self.view.$( ".datepicker" ).datepicker();
         if (this.model.get('ready')) {
           this.view.$("#first").hide();
+          this.view.$("#countdown").show();
         } else {
           this.view.$("#first").show();
+          this.view.$("#countdown").hide();
         }
       }
     },
 
     computeDelta: function(dateText) {
+      console.log("in computeDelta, dateText is", dateText)
       var then = new Date(dateText);
       var now = new Date(Date.now());
       var one_day = 1000*60*60*24;
       var delta, numDays;
       delta = then.getTime() - now.getTime();
       numDays = Math.ceil(delta / one_day);
-      this.model.numDays = numDays;
-      this.model.dateText = dateText;
-      this.model.set({'when':dateText});
+      this.model.set({'when':dateText, 'numDays': numDays});
+      console.log({'when':dateText, 'numDays': numDays})
     },
 
     updateState: function() {
-      var txt;
-      var what = this.view.$(".what").val();
-      var numDays = this.model.numDays;
-      if (this.model.dateText && what){
-        if (numDays == 1) 
-          txt = what + " is tomorrow!";
-        else if (numDays > 1)
-          txt = numDays + " days to go before " + what;
-        else if (numDays == 0)
-          txt = what + " is today!";
-        else if (numDays == -1) 
-          txt = what + " was yesterday!";
-        else 
-          txt = what + " was " + (-1 * numDays) + " days ago!";
-        this.model.set({text:txt});
-        this.model.set({'what':what});
+      try {
+        var txt;
+        var what = this.model.get('what');
+        var numDays = this.model.get('numDays');
+        console.log("in updateState, what=", what, "numDays", numDays);
+        if (numDays && what){
+          if (numDays == 1) 
+            txt = what + " is tomorrow!";
+          else if (numDays > 1)
+            txt = numDays + " days to go before " + what;
+          else if (numDays == 0)
+            txt = what + " is today!";
+          else if (numDays == -1) 
+            txt = what + " was yesterday!";
+          else 
+            txt = what + " was " + (-1 * numDays) + " days ago!";
+          console.log("WHAT", what, "TXT", txt);
+          this.model.set({'text':txt});
+        }
+        if (this.model.get('ready')) {
+          this.view.$("#countdown").show();
+        } else {
+          this.view.$("#countdown").hide();
+        }
+      } catch (e) {
+        console.log(e);
       }
     }
   }).persist($$.adapter.restful, {collection:'deadlines'});
@@ -272,7 +281,15 @@ var datePicker, countdown, app, deadlines;
 $(function() {
   try {
 
-    app = $$({}, '<div class="container" id="everything"> </div>');
+    app = $$({
+      view: {format: '<div class="container" id="everything"><div id="main"></div><a class="new">new deadline</a></div>'},
+      controller: {
+        'click .new': function() {
+          var newdeadline = $$(deadline);
+          deadlines.append(newdeadline, "ul")
+        },
+      }
+    });
     $$.document.append(app);
 
     var signin = $$({}, '<div id="loginInfo">\
@@ -283,25 +300,20 @@ $(function() {
 
     deadlines = $$(
       {
-        model: {},
         view: {
           format: '<div id="deadlines"><ul/></div>'
         },
         controller: {
           'persist:gather:success': function() {
-            try {
-              this.each(function(a){
-                this.controller.update();
-              });
-            } catch (e) {
-               console.trace();
-             console.log(e);
-            }
+            this.each(function(a){
+              this.controller.update();
+            });
           },
         }
       }
-       ).persist($$.adapter.restful, {collection:'deadlines'});
-    app.append(deadlines);
+    ).persist($$.adapter.restful, {collection:'deadlines'});
+    app.append(deadlines, '#main');
+
 
     $.get('/api/whoami', function (res) {
       if (res === null) loggedOut();

@@ -266,7 +266,8 @@ app.put("/api/deadlines/:id", function(req, res) {
   });
 })
 
-app.post("/api/deadlines/:id", function(req, res) {
+
+app.post("/api/deadlines", function(req, res) {
   var email = req.session.email;
   console.log("adding deadline", JSON.stringify(req.body));
 
@@ -276,25 +277,28 @@ app.post("/api/deadlines/:id", function(req, res) {
     res.end();
     return;
   }
-  var deadline_key = email + '-deadline-' + req.params.id;
-  var deadlines_key = email + '-deadlines';
-  console.log("BODY", req.body);
 
-  db.set(deadline_key, JSON.stringify(req.body), function(err) {
-    console.log("setting deadline ", deadline_key, "to", JSON.stringify(req.body)); 
-    if (err) {
-      res.writeHead(500);
-      res.end();
-      return;
-    } 
-    db.sadd(deadlines_key, deadline_key, function(err) {
+  var deadlines_key = email + '-deadlines';
+  db.scard(deadlines_key, function(err, count) {
+
+    var deadline_key = email + '-deadline-' + String(count + 1);
+
+    db.set(deadline_key, JSON.stringify(req.body), function(err) {
+      // console.log("setting deadline ", deadline_key, "to", JSON.stringify(req.body)); 
       if (err) {
-        console.log("error doing sadd of ", deadline_key, "to", deadlines_key);
         res.writeHead(500);
         res.end();
         return;
-      }
-      res.json(true);
+      } 
+      db.sadd(deadlines_key, deadline_key, function(err) {
+        if (err) {
+          console.log("error doing sadd of ", deadline_key, "to", deadlines_key);
+          res.writeHead(500);
+          res.end();
+          return;
+        }
+        res.json(true);
+      });
     });
   });
 })

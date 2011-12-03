@@ -19,6 +19,10 @@ body {
   top: 0.5em;
 }
 
+.hidden {
+  border: 3px solid blue;
+}
+
 #loginInfo {
   position: fixed;
   left: 1em;
