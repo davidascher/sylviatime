@@ -16,6 +16,21 @@ function setSessions(val) {
   }
 } 
 
+WebFontConfig = {
+  google: { families: [ 'Lemon::latin', 'Unlock::latin', 'Mr+De+Haviland::latin', 'Aladin::latin', 'Miss+Fajardose::latin', 'Bubblegum+Sans::latin', 'Piedra::latin', 'Spirax::latin', 'Ribeye+Marrow::latin', 'Ribeye::latin', 'Signika+Negative::latin' ] }
+};
+(function() {
+  var wf = document.createElement('script');
+  wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+    '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+  wf.type = 'text/javascript';
+  wf.async = 'true';
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(wf, s);
+})();
+
+FontFamilies = WebFontConfig['google']['families'];
+
 // this is a fix for the jQuery slide effects
 function slideToggle(el, bShow){
   var $el = $(el), height = $el.data("originalHeight"), visible = $el.is(":visible");
@@ -46,6 +61,20 @@ function slideToggle(el, bShow){
     });
   }
 }
+
+$('body').keypress(function (e) {
+  var fi = currentDeadline.model.get('fontIndex');
+  if (e.charCode == 93) {
+    fi++;
+    if (fi >= FontFamilies.length) fi = 0;
+  } else if (e.charCode == 91) {
+    fi--;
+    if (fi < 0) fi = FontFamilies.length-1;
+  }
+  currentDeadline.model.set({'fontIndex': fi})
+  currentDeadline.save();
+});
+
 
 // when the user is found to be logged in we'll update the UI, fetch and
 // display the user's favorite beer from the server, and set up handlers to
@@ -86,7 +115,8 @@ function loggedIn(email, immediate) {
       numDays: 0,
       ready: false,
       dateText: '',
-      color: '#34a044'
+      color: '#34a044',
+      fontIndex: 0
     },
     view: { 
       format:
@@ -114,6 +144,10 @@ function loggedIn(email, immediate) {
         </div>'
     },
     controller: {
+      'mouseenter &': function() {
+        var self = this;
+        currentDeadline = self;
+      },
       'click .create': function() {
         this.model.set({ready:true});
         this.updateText();
@@ -165,6 +199,9 @@ function loggedIn(email, immediate) {
       'change:what': function() {
         this.updateText();
       },
+      'change:fontIndex': function() {
+       this.updateFont();
+      },
       'change:when': function() {
         this.computeDelta(this.model.get('when'));
         this.updateText();
@@ -183,7 +220,13 @@ function loggedIn(email, immediate) {
           this.view.$(".controls").slideDown();
           this.view.$("#countdown").hide();
         }
+
         this.updateColor();
+        try {
+          this.updateFont();
+          } catch (e) {
+            console.log(e);
+          }
       }
     },
     updateColor: function() {
@@ -193,6 +236,15 @@ function loggedIn(email, immediate) {
       var textcolor = idealTextColor(color);
       this.view.$(".counter").css('color',textcolor);
       this.view.$(".edit").css('color',textcolor);
+    },
+    updateFont: function() {
+      var index = this.model.get('fontIndex');
+      var font = FontFamilies[index];
+      var counter = this.view.$(".counter");
+      for (var i =0; i<FontFamilies.length;i++) {
+        counter.removeClass('font-'+String(Number(i)+1));
+      }
+      counter.addClass('font-'+String(Number(index)+1));
     },
 
     computeDelta: function(dateText) {

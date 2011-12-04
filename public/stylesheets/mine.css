@@ -5,6 +5,65 @@ body {
   background-repeat: repeat;
 }
 
+.wf-loading p {
+  font-family: serif
+}
+.wf-inactive p {
+  font-family: serif
+}
+.wf-active p {
+  font-family: 'Tangerine', serif
+}
+.wf-loading p {
+  font-family: serif;
+  /*font-size: 16px*/
+}
+.wf-inactive h1 {
+  font-family: serif;
+  /*font-size: 16px*/
+}
+.wf-active h1 {
+  /*font-family: 'Cantarell', serif;*/
+  /*font-size: 16px*/
+}
+
+.font-1 {
+  font-family: 'Lemon', cursive;
+}
+.font-2 {
+  font-family: 'Cagliostro', sans-serif;
+}
+.font-3 {
+  font-family: 'Unlock', cursive;
+}
+.font-4 {
+  font-family: 'Mr De Haviland', cursive;
+}
+.font-5 {
+  font-family: 'Aladin', cursive;
+}
+.font-6 {
+  font-family: 'Miss Fajardose', cursive;
+}
+.font-7 {
+  font-family: 'Bubblegum Sans', cursive;
+}
+.font-8 {
+  font-family: 'Piedra', cursive;
+}
+.font-9 {
+  font-family: 'Spirax', cursive;
+}
+.font-10 {
+  font-family: 'Ribeye Marrow', cursive;
+}
+.font-11 {
+  font-family: 'Ribeye', cursive;
+}
+.font-12 {
+  font-family: 'Signika Negative', sans-serif;
+}
+
 #you, #picture {
   display: inline;
 }
@@ -87,6 +146,7 @@ body, #container {
 }
 
 .hero-unit h1 {
+  font-weight: normal;
   /*color: white;*/
 }
 
