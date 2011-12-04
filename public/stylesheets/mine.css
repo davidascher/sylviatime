@@ -175,6 +175,11 @@ body, #container {
   transition-duration: .2s;
 }
 
+
+.opaque {
+  opacity: 1 !important;
+}
+
 .hero-unit .delete {
   position: absolute;
   right: 1em;

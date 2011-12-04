@@ -150,8 +150,8 @@ function loggedIn(email, immediate) {
       },
       'click .create': function() {
         this.model.set({ready:true});
-        this.updateText();
         $("#colorpicker-container").hide();
+        this.updateText();
         this.save();
       },
       'click .colorclose': function() {
@@ -160,7 +160,7 @@ function loggedIn(email, immediate) {
       'click .edit': function() {
         var self = this;
         if (this.view.$(".edit").text() == 'done') {
-          this.view.$(".edit").text('tweak')
+          this.view.$(".edit").text('tweak').removeClass('opaque');
           this.model.set({ready:true});
           this.updateText();
           $("#colorpicker-container").hide();
@@ -176,7 +176,7 @@ function loggedIn(email, immediate) {
         cp.appendTo(self.view.$()[0])
         cp.css({'position': 'absolute'});
         cp.fadeIn();
-        this.view.$(".edit").text('done');
+        this.view.$(".edit").text('done').addClass('opaque');
       },
 
       'click .delete': function() {
@@ -198,6 +198,7 @@ function loggedIn(email, immediate) {
       },
       'change:what': function() {
         this.updateText();
+        this.save();
       },
       'change:fontIndex': function() {
        this.updateFont();
@@ -266,7 +267,7 @@ function loggedIn(email, immediate) {
           if (numDays == 1) 
             txt = what + " is tomorrow!";
           else if (numDays > 1)
-            txt = numDays + " days to go before " + what;
+            txt = "Only " + numDays + " days to go before " + what;
           else if (numDays == 0)
             txt = what + " is today!";
           else if (numDays == -1) 
@@ -275,11 +276,11 @@ function loggedIn(email, immediate) {
             txt = what + " was " + (-1 * numDays) + " days ago!";
           this.model.set({'text':txt});
         }
-        if (this.model.get('ready')) {
-          this.view.$("#countdown").show();
-        } else {
-          this.view.$("#countdown").hide();
-        }
+        // if (this.model.get('ready')) {
+        //   this.view.$("#countdown").show();
+        // } else {
+        //   this.view.$("#countdown").hide();
+        // }
       } catch (e) {
         console.log(e);
       }
