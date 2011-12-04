@@ -155,6 +155,24 @@ body, #container {
   right: 1em;
   top: 1em;
   color: white;
+  opacity: 0;
+}
+
+.hero-unit:hover .edit,
+.hero-unit:hover .delete {
+  opacity: 1;
+  /* Firefox */
+  -moz-transition-property: opacity;
+  -moz-transition-duration: .2s;
+  /* WebKit */
+  -webkit-transition-property: opacity;
+  -webkit-transition-duration: .2s;
+  /* Opera */
+  -o-transition-property: opacity;
+  -o-transition-duration: .2s;
+  /* Standard */
+  transition-property: opacity;
+  transition-duration: .2s;
 }
 
 .hero-unit .delete {
@@ -162,6 +180,7 @@ body, #container {
   right: 1em;
   bottom: 1em;
   color: white;
+  opacity: 0;
 }
 
 
