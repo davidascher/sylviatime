@@ -73,6 +73,10 @@ body {
   width: 100%;
 }
 
+#signinButton {
+  padding: 10em;
+}
+
 .countdown-container {
   position: relative;
 }

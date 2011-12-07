@@ -105,9 +105,9 @@ function determineBrowserIDURL(req) {
 
   return ({
     prod:   'https://browserid.org',
-    beta:   'https://diresworb.org',
-    dev:    'https://dev.diresworb.org',
-    local:  'https://dev.diresworb.org'
+    beta:   'https://browserid.org',
+    dev:    'https://browserid.org',
+    local:  'https://browserid.org'
   })[determineEnvironment(req)];
 }
 

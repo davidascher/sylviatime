@@ -330,21 +330,6 @@ function logout(event) {
   });
 }
 
-// when no user is logged in, we'll display a "sign-in" button
-// which will call into browserid when clicked.
-function loggedOut() {
-  setSessions();
-  var unlogged = $("#unlogged").show();
-  var loggedin = $("#loggedin").hide();
-
-  var l = $("#login").removeClass('clickable');
-  l.html('<img src="images/sign_in_blue.png" alt="Sign in">')
-    .show().click(function() {
-      $("header .login").css('opacity', '0.5');
-      navigator.id.getVerifiedEmail(gotVerifiedEmail);
-    }).addClass("clickable").css('opacity','1.0');
-}
-
 // a handler that is passed an assertion after the user logs in via the
 // browserid dialog
 function gotVerifiedEmail(assertion) {
@@ -464,7 +449,7 @@ function loggedOut() {
   $('.intro').fadeIn(300);
   $("#loginInfo .picture").empty();
   var l = $("#loginInfo .login").removeClass('clickable');
-  l.html('<img src="images/sign_in_blue.png" alt="Sign in">')
+  l.html('<img id="signinButton" src="images/sign_in_blue.png" alt="Sign in">')
     .show().click(function() {
       $("#loginInfo .login").css('opacity', '0.5');
       navigator.id.getVerifiedEmail(gotVerifiedEmail);
@@ -485,7 +470,7 @@ $(function() {
             <div id="you" class="login"></div>\
           </div>\
           <div id="colorpicker-container" class="hidden"><div id="colorpicker-placeholder"></div><span class="colorclose">X</span></div>\
-          <div class="container" id="everything"><div id="main"></div><a class="new">new deadline</a></div>'},
+          <div class="container" id="everything"><div id="main"></div><a id="new" class="new hidden">new</a></div>'},
       controller: {
         'click .colorclose': function() {
           $("#colorpicker-container").hide();
