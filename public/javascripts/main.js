@@ -346,6 +346,8 @@ $('body').keypress(function (e) {
   if (e.charCode == 93) {
     fi++;
     if (fi >= FontFamilies.length) fi = 0;
+    currentDeadline.model.set({'fontIndex': fi})
+    currentDeadline.save();
   } else if (e.charCode == 91) {
     fi--;
     if (fi < 0) fi = FontFamilies.length-1;
@@ -402,10 +404,10 @@ function setupDeadlines() {
       },
       'click .create': function() {
         this.model.set({ready:true, color: randomHexColor()});
+        this.save();
         $("#colorpicker-container").hide();
         this.view.$(".countdown").show();
         this.updateText();
-        this.save();
       },
       'click .colorclose': function() {
         $("#colorpicker-container").hide();
@@ -441,8 +443,11 @@ function setupDeadlines() {
       'change:ready': function() {
         if (this.model.get('ready')) {
           this.view.$(".controls").slideUp();
+          this.view.$(".countdown").fadeIn();
+
         } else {
           slideToggle(this.view.$(".controls"));
+          this.view.$(".controls").slideDown();
         }
       },
       update: function() {
@@ -468,20 +473,19 @@ function setupDeadlines() {
         var self = this;
         self.view.$(".hero-unit").css('backgroundColor', self.model.get('color'));
         self.view.$( ".datepicker" ).datepicker();
+        console.log('ready is', this.model.get('ready'))
         if (this.model.get('ready')) {
           this.view.$(".controls").slideUp();
-          this.view.$("#countdown").show();
+          this.view.$(".countdown").show();
+          this.view.$(".countdown").removeClass('hidden');
         } else {
           this.view.$(".controls").slideDown();
-          this.view.$("#countdown").hide();
+          this.view.$(".controls").removeClass('hidden');
+          this.view.$(".countdown").hide();
         }
 
         this.updateColor();
-        try {
-          this.updateFont();
-          } catch (e) {
-            console.log(e);
-          }
+        this.updateFont();
       }
     },
     updateColor: function() {
@@ -559,11 +563,11 @@ $(function() {
 
     var app = $$({
       view: {format: '<div id="loginInfo">\
-                        <div id="picture"></div>\
-                        <div id="you" class="login"></div>\
-                      </div>\
-                      <div id="colorpicker-container" class="hidden"><div id="colorpicker-placeholder"></div><span class="colorclose">X</span></div>\
-                      <div class="container" id="everything"><div id="main"></div><button id="new" class="btn primary new hidden">new</button></div>'},
+            <div id="picture"></div>\
+            <div id="you" class="login"></div>\
+          </div>\
+          <div id="colorpicker-container" class="hidden"><div id="colorpicker-placeholder"></div><span class="colorclose">X</span></div>\
+          <div class="container" id="everything"><div id="main"></div><button class="btn primary new">new deadline</button></div>'},
       controller: {
         'click .colorclose': function() {
           $("#colorpicker-container").hide();

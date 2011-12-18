@@ -145,24 +145,21 @@ task('default', ["load-props", "create-versioned-dir", "move-files", "symlink-li
 	exec("sudo stop " + svcName, function (error, stdout, stderr) {
 
 		if (error) {
-			throw error;
-		} else {
-			console.log(("\n    Executing command:\n    $sudo start " + svcName).grey);
+            console.log("Error stopping, but ignoring it", error);
+        }
+		console.log(("\n    Executing command:\n    $sudo start " + svcName).grey);
 
-			exec("sudo start " + svcName, function (error, stdout, stderr) {
-				console.log("\n + Old instance killed successfully\n".green);
-				if (error) {
-					console.log(" + New instance failed to be put live\n".red);
-					throw error;
-				} else {
-					console.log(" + New instance is put live\n".green);
-					complete();
-				}
-			});
-		}
-
+		exec("sudo start " + svcName, function (error, stdout, stderr) {
+			console.log("\n + Old instance killed successfully\n".green);
+			if (error) {
+				console.log(" + New instance failed to be put live\n".red);
+				throw error;
+			} else {
+				console.log(" + New instance is put live\n".green);
+				complete();
+			}
+		});
 	});
-
 });
 
 function stylize(str, style) {

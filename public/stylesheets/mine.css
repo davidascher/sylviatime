@@ -118,7 +118,7 @@ body, #container {
 
 #logout {
   position: absolute;
-  right: 1em;
+  right: 3em;
   top: 0.5em;
 }
 
@@ -135,6 +135,10 @@ body, #container {
 
 .controls {
   padding-bottom: 2em;
+}
+
+.btn.new {
+  margin-left: 16em;
 }
 
 #countdown {

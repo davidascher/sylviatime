@@ -76,8 +76,8 @@ app.use(function (req, res, next) {
       cookie: {
         path: '/api',
         httpOnly: true,
-        // when you're logged in, you're logged in for an hour
-        maxAge: (1 * 60 * 60 * 1000), 
+        // when you're logged in, you're logged in for a month
+        maxAge: (30 * 24 * 60 * 60 * 1000), 
         secure: false
       }
     })(req, res, next);
@@ -205,39 +205,45 @@ app.get("/api/deadlines", function (req, res) {
   }
 
   var key = email+'-deadlines';
-
-  db.smembers(key, function(err, deadline_keys) {
-    if (err) {
-      console.log("error getting deadline_keys for", email); 
-      res.writeHead(500);
-      res.end();
+  db.exists(key, function(err, exists) {
+    if (!exists) {
+      // user unknown
+      res.json([]);
       return;
     }
-    console.log('deadline_keys:', deadline_keys);
-    if (deadline_keys.length == 0) {
-      return res.json([
-        {id:1, what:"xmas", when:"12/25/2011", ready:true},
-        {id:2, what:"new year", when:"1/1/2012", ready:true},
-        ]);
-    }
-    db.mget(deadline_keys, function(err, deadlines) {
+    db.smembers(key, function(err, deadline_keys) {
       if (err) {
-        console.log("error getting deadlines for", deadline_keys); 
+        console.log("error getting deadline_keys for", email); 
         res.writeHead(500);
         res.end();
         return;
       }
-
-      console.log(deadline_keys);
-      console.log(deadlines);
-      deadlines_objs = [];
-      for (var i=0; i < deadlines.length; i++) {
-        console.log(deadlines[i]);
-        deadlines_objs.push(JSON.parse(deadlines[i]));
+      console.log('deadline_keys:', deadline_keys);
+      if (deadline_keys.length == 0) {
+        return res.json([
+          {id:1, what:"xmas", when:"12/25/2011", ready:true},
+          {id:2, what:"new year", when:"1/1/2012", ready:true},
+          ]);
       }
-      res.json(deadlines_objs);
+      db.mget(deadline_keys, function(err, deadlines) {
+        if (err) {
+          console.log("error getting deadlines for", deadline_keys); 
+          res.writeHead(500);
+          res.end();
+          return;
+        }
+
+        console.log(deadline_keys);
+        console.log(deadlines);
+        deadlines_objs = [];
+        for (var i=0; i < deadlines.length; i++) {
+          console.log(deadlines[i]);
+          deadlines_objs.push(JSON.parse(deadlines[i]));
+        }
+        res.json(deadlines_objs);
+      });
     });
-  });
+  })
 });
 
 
@@ -267,7 +273,7 @@ app.put("/api/deadlines/:id", function(req, res) {
 
 app.delete("/api/deadlines/:id", function(req, res) {
   var email = req.session.email;
-  console.log("adding deadline", JSON.stringify(req.body));
+  console.log("deleting deadline", JSON.stringify(req.body));
 
   if (!email) {
     res.writeHead(400, {"Content-Type": "text/plain"});
@@ -286,6 +292,7 @@ app.delete("/api/deadlines/:id", function(req, res) {
       res.end();
       return;
     } 
+    console.log("doing srem of ", deadline_key, "from", deadlines_key);
     db.srem(deadlines_key, deadline_key, function(err) {
       if (err) {
         console.log("error doing srem of ", deadline_key, "from", deadlines_key);
@@ -310,9 +317,10 @@ app.post("/api/deadlines", function(req, res) {
   }
 
   var deadlines_key = email + '-deadlines';
+  var watermark = email + '-wmark';
   var deadline = req.body;
-  db.incr('nextid', function(err, id) {
-    var deadline_key = email + '-deadline-' + String(id);
+  db.incr(watermark, function(err, index) {
+    var deadline_key = email + '-deadline-' + String(index);
     deadline['id'] = deadline_key;
 
     db.set(deadline_key, JSON.stringify(deadline), function(err) {
