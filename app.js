@@ -92,9 +92,9 @@ app.use(function (req, res, next) {
 // (dev/beta/prod):
 
 function determineEnvironment(req) {
-  if (req.headers['host'] === 'myfavoritebeer.org') return 'prod';
-  else if (req.headers['host'] === 'beta.myfavoritebeer.org') return 'beta';
-  else if (req.headers['host'] === 'dev.myfavoritebeer.org') return 'dev';
+  if (req.headers['host'] === 'sylviatime.com') return 'prod';
+  else if (req.headers['host'] === 'beta.sylviatime.com') return 'beta';
+  else if (req.headers['host'] === 'dev.sylviatime.com') return 'dev';
   else return 'local';
 }
 
