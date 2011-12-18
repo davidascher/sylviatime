@@ -31,7 +31,10 @@ function loggedOut() {
   $(".row").hide();
   $("#loginInfo").show();
   $('.intro').fadeIn(300);
-  $("#loginInfo .picture").empty();
+  $("#new").hide();
+  var unlogged = $(".unlogged").show();
+  var loggedin = $(".loggedin").hide();
+  $("#picture").empty();
   var l = $("#loginInfo .login").removeClass('clickable');
   l.html('<img id="signinButton" src="images/sign_in_blue.png" alt="Sign in">')
     .show().click(function() {
@@ -46,8 +49,8 @@ function loggedOut() {
 function loggedIn(email, immediate) {
   setSessions([ { email: email } ]);
 
-  var unlogged = $("#unlogged").hide();
-  var loggedin = $("#loggedin").show();
+  var unlogged = $(".unlogged").hide();
+  var loggedin = $(".loggedin").show();
   $("#new").show();
   // set the user visible display
   var l = $("#you").removeClass('clickable');;
@@ -563,11 +566,11 @@ $(function() {
 
     var app = $$({
       view: {format: '<div id="loginInfo">\
-            <div id="picture"></div>\
+            <div id="picture" class="loggedin"></div>\
             <div id="you" class="login"></div>\
           </div>\
           <div id="colorpicker-container" class="hidden"><div id="colorpicker-placeholder"></div><span class="colorclose">X</span></div>\
-          <div class="container" id="everything"><div id="main"></div><button class="btn primary new">new deadline</button></div>'},
+          <div class="container loggedin" id="everything"><div id="main"></div><button id="new" class="btn primary new">new deadline</button></div>'},
       controller: {
         'click .colorclose': function() {
           $("#colorpicker-container").hide();
