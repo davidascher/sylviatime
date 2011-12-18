@@ -342,6 +342,7 @@ function slideToggle(el, bShow){
 }
 
 $('body').keypress(function (e) {
+  if (!currentDeadline) return;
   var fi = currentDeadline.model.get('fontIndex');
   if (e.charCode == 93) {
     fi++;
@@ -473,7 +474,6 @@ function setupDeadlines() {
         var self = this;
         self.view.$(".hero-unit").css('backgroundColor', self.model.get('color'));
         self.view.$( ".datepicker" ).datepicker();
-        console.log('ready is', this.model.get('ready'))
         if (this.model.get('ready')) {
           this.view.$(".controls").slideUp();
           this.view.$(".countdown").show();

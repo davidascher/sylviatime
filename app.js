@@ -49,7 +49,7 @@ var localHostname = undefined;
 app.use(express.logger({ format: 'dev' }));
 // parse cookies
 app.use(express.cookieParser());
-app.use(express.session({ secret: COOKIE_SECRET, store: new RedisStore }));
+// app.use(express.session({ secret: COOKIE_SECRET, store: new RedisStore }));
 // parse post bodies
 app.use(express.bodyParser());
 
@@ -199,7 +199,7 @@ app.get("/api/deadlines", function (req, res) {
 
   if (!email) {
     res.writeHead(400, {"Content-Type": "text/plain"});
-    res.write("Bad Request: you must be authenticated to get your beer");
+    res.write("Bad Request: you must be authenticated to play");
     res.end();
     return;
   }
