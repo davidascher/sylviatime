@@ -298,9 +298,9 @@ app.delete("/api/deadlines/:id", function(req, res) {
   });  
 });
 
+
 app.post("/api/deadlines", function(req, res) {
   var email = req.session.email;
-  console.log("adding deadline", JSON.stringify(req.body));
 
   if (!email) {
     res.writeHead(400, {"Content-Type": "text/plain"});
@@ -311,9 +311,8 @@ app.post("/api/deadlines", function(req, res) {
 
   var deadlines_key = email + '-deadlines';
   var deadline = req.body;
-  db.scard(deadlines_key, function(err, count) {
-
-    var deadline_key = email + '-deadline-' + String(count + 1);
+  db.incr('nextid', function(err, id) {
+    var deadline_key = email + '-deadline-' + String(id);
     deadline['id'] = deadline_key;
 
     db.set(deadline_key, JSON.stringify(deadline), function(err) {
@@ -323,9 +322,10 @@ app.post("/api/deadlines", function(req, res) {
         res.end();
         return;
       } 
+      // console.log("ADDING ", deadline_key, " TO ", deadlines_key);
       db.sadd(deadlines_key, deadline_key, function(err) {
         if (err) {
-          console.log("error doing sadd of ", deadline_key, "to", deadlines_key);
+          console.log("error doing sadd of ", deadline_key, "to", deadlines_key, "err:", err);
           res.writeHead(500);
           res.end();
           return;

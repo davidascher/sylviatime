@@ -349,6 +349,8 @@ $('body').keypress(function (e) {
   } else if (e.charCode == 91) {
     fi--;
     if (fi < 0) fi = FontFamilies.length-1;
+  } else {
+    return;
   }
   currentDeadline.model.set({'fontIndex': fi})
   currentDeadline.save();
@@ -449,7 +451,8 @@ function setupDeadlines() {
       },
       'change:what': function() {
         this.updateText();
-        this.save();
+        if (this.model.get('ready'))
+          this.save();
       },
       'change:fontIndex': function() {
        this.updateFont();
