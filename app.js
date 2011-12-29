@@ -338,7 +338,7 @@ app.post("/api/deadlines", function(req, res) {
           res.end();
           return;
         }
-        res.json(true);
+        res.json({'id': deadline_key});
       });
     });
   });

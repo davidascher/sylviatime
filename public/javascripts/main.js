@@ -9,7 +9,7 @@ var google_ad_height = 90;
 
 var deadline, deadlines, colorpicker;
 var now = new Date(Date.now());
-var tomorrow_string = new Date(now.getTime() + (24 * 60 * 60 * 1000)).toLocaleDateString();
+var tomorrow_string = '';
 var currentDeadline = null;
 
 
