@@ -233,13 +233,15 @@ app.get("/api/deadlines", function (req, res) {
           return;
         }
 
-        console.log(deadline_keys);
-        console.log(deadlines);
         deadlines_objs = [];
         for (var i=0; i < deadlines.length; i++) {
-          console.log(deadlines[i]);
           deadlines_objs.push(JSON.parse(deadlines[i]));
         }
+        function sortByDate(a,b) {
+          if (new Date(a['when']) < new Date(b['when'])) return -1;
+          return 1;
+        }
+        deadlines_objs.sort(sortByDate);
         res.json(deadlines_objs);
       });
     });

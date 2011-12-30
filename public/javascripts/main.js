@@ -393,7 +393,7 @@ function setupDeadlines() {
               <label class="xlarge">What are you waiting for?</label>\
               <div class="input">\
                 <input id="what" class="what" data-bind="what" name="what" size="30" type="text"/>\
-                when?\
+                <span id="when">when?</span>\
                 <input class="large datepicker" data-bind="when" name="when" size="30" type="text"/>\
                 <button id="create" class="create btn">create countdown!</button>\
               </div>\

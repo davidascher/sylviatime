@@ -295,6 +295,51 @@ label.xlarge {
   margin-bottom: 15em;
 }
 
+@media only screen and (max-width:500px){
+  .hero-unit {
+    margin: 0;
+    /*width: 100%;*/
+    padding-top: 1em;
+    padding-bottom: 1em;
+    border-radius: 0;
+  }
+  .hero-unit h1 {
+    font-size: 30pt;
+  }
+  .container {
+    width: 100%;
+  }
+  #countdown,#countdown.row,.countdown-container {
+    margin: 0;
+    padding: 0;
+  }
+  #when, #create {
+    display: block;
+  }
+  .uneditable-input {
+    width: 120px;
+  }
+  .row {
+    margin-left: 1em;
+  }
+  label.xlarge, #when {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding-top: 1em;
+    padding-bottom: 1em;
+  }
+  #create {
+    margin-top: 1em;
+  }
+  ul {
+    margin: 0;
+  }
+  #new {
+    margin-top: 2em;
+  }
+}
+
 /*scheme:*/
 /*#233338*/
 /*#5B5A14*/
